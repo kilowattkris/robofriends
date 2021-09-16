@@ -1,31 +1,42 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect, Suspense} from "react";
 import ErrorBoundary from "../components/ErrorBoundary";
 import "./App.css";
 import SearchBar from "../components/SeachBar";
-import CardList from "../components/CardList";
 import Scroll from "../components/Scroll";
+import { useSelector, useDispatch } from 'react-redux';
+import {fetchRobots} from '../features/robots/robotsSlice';
+
+//import CardList from "../components/CardList";
+const CardList = React.lazy(() => import("../components/CardList"));
 
 const App = () => {
-  const [robots, setRobots] = useState([]);
+  // const [robots, setRobots] = useState([]);
+  const robots = useSelector((state) => state.robots.robots);
+  const dispatch = useDispatch();
   const [search, setSearch] = useState("");
 
+  // dispatch(fetchRobots());
+
   useEffect(() => {
-    const configUsers = users => {
-      return users.map(user => createImgSrc(user));
-    };
+    // const configUsers = users => {
+    //   return users.map(user => createImgSrc(user));
+    // };
 
-    const createImgSrc = (user) => {
-      user.imgSrc = `https://robohash.org/${user.id}.png`;
-      user.imgAlt = user.name;
-      return user;
-    };
+    // const createImgSrc = (user) => {
+    //   user.imgSrc = `https://robohash.org/${user.id}.png`;
+    //   user.imgAlt = user.name;
+    //   return user;
+    // };
 
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(users => {
-        setRobots(configUsers(users));
-      });
-  }, []);
+    // fetch('https://jsonplaceholder.typicode.com/users')
+    //   .then(response => response.json())
+    //   .then(users => {
+    //     //setRobots(configUsers(users));
+    //     dispatch(success(configUsers(users)));
+    //   })
+    //   .catch(error => dispatch(failed(error)));
+    dispatch(fetchRobots())
+  }, [dispatch]);
 
   const filteredRobots = robots.filter((robot) => robot.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -37,7 +48,9 @@ const App = () => {
       </header>
       <ErrorBoundary>
         <Scroll>
-          <CardList cards={filteredRobots}/>
+          <Suspense fallback={<div></div>}>
+            <CardList cards={filteredRobots}/>
+          </Suspense>
         </Scroll>
       </ErrorBoundary>
     </div>
