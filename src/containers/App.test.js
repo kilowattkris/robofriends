@@ -1,8 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
+import { store } from "../store";
+import { Provider } from 'react-redux';
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+const ProviderWrapper = ({ children }) => (
+	<Provider store={store}>{children}</Provider>
+);
+
+it('Renders Title', () => {
+  console.log(store);
+  render(<App />, { wrapper: ProviderWrapper});
+  const title = screen.getByText(/Robofriends/i);
+  expect(title).toBeInTheDocument();
 });

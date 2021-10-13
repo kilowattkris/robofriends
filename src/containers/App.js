@@ -3,16 +3,15 @@ import ErrorBoundary from "../components/ErrorBoundary";
 import "./App.css";
 import SearchBar from "../components/SeachBar";
 import Scroll from "../components/Scroll";
+import Counter from "../components/Counter";
 import { useSelector, useDispatch } from 'react-redux';
 import {fetchRobots} from '../features/robots/robotsSlice';
-import {increment} from "../features/counter/counterSlice";
 
 const CardList = React.lazy(() => import("../components/CardList"));
 
 const App = () => {
   const robots = useSelector((state) => state.robots.robots);
   const loading = useSelector((state) => state.robots.loading);
-  const count = useSelector((state) => state.counter.count);
   const dispatch = useDispatch();
   const [search, setSearch] = useState("");
 
@@ -21,14 +20,11 @@ const App = () => {
   }, [dispatch]);
 
   const filteredRobots = robots.filter((robot) => robot.name.toLowerCase().includes(search.toLowerCase()));
-  const incrementCount = () => {
-    dispatch(increment());
-  };
 
   return <div className="App">
     <header className="App-header">
       <h1>Robofriends</h1>
-      <button className="btn" onClick={incrementCount}>{`I've been clicked ${count} times`}</button>
+      <Counter />
       <SearchBar setSearch={setSearch} />
     </header>
     <ErrorBoundary>
